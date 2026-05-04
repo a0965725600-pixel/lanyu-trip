@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蘭嶼大學生熱血探索計畫：花蓮出發</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-bg': '#fdfbf7',
+                        'brand-surface': '#f3eee3',
+                        'brand-primary': '#0f766e',
+                        'brand-secondary': '#ccfbf1',
+                        'brand-accent': '#ea580c',
+                        'text-main': '#374151',
+                        'text-light': '#6b7280'
+                    },
+                    fontFamily: {
+                        'sans': ['"Noto Sans TC"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px; 
+            max-height: 400px; 
+        } 
+        @media (min-width: 768px) { 
+            .chart-container { height: 350px; } 
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #0f766e; border-radius: 3px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .loader { 
+            border: 3px solid #f3f3f3; 
+            border-top: 3px solid #ea580c; 
+            border-radius: 50%; 
+            width: 20px; 
+            height: 20px; 
+            animation: spin 1s linear infinite; 
+            display: inline-block; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-brand-bg text-text-main font-sans antialiased">
+
+<!-- Chosen Palette: Warm Coastal (Neutral Sand background #fdfbf7, Teal primary #0f766e, Sunset Orange accent #ea580c) -->
+<!-- Application Structure Plan: The SPA uses a dashboard-style, linear narrative structure with embedded AI interactivity. It begins with a hero section establishing the context (Hualien to Lanyu for students). It logically flows through Transport (visual step-by-step), Itinerary (interactive tabs to manage density, plus an AI optimization tool), Budget (Chart.js visualization plus an AI budget calculator), and Culture (Cards plus an AI Q&A guide). This structure chunks complex travel data into digestible, interactive modules, preventing cognitive overload while keeping users engaged through dynamic LLM feedback. -->
+<!-- Visualization & Content Choices: 
+     - Transport -> Inform -> CSS Grid/Flex Steps -> Simplifies multi-modal transfer -> HTML/CSS.
+     - Itinerary -> Organize -> Tabbed Navigation -> Reduces scrolling, focuses on daily tasks -> Vanilla JS.
+     - Budget -> Compare/Inform -> Doughnut Chart -> Visually breaks down NT$10,000 budget -> Chart.js.
+     - Culture/Taboos -> Inform/Engage -> Interactive AI Chat Box -> Allows natural language exploration of sensitive cultural topics -> Gemini API integration.
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="fixed top-0 w-full bg-brand-bg/90 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <span class="text-2xl">🏝️</span>
+                    <span class="font-bold text-brand-primary text-lg tracking-wider">蘭嶼熱血計畫</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#transport" class="text-text-main hover:text-brand-primary transition font-medium">交通路線</a>
+                    <a href="#itinerary" class="text-text-main hover:text-brand-primary transition font-medium">每日行程</a>
+                    <a href="#budget" class="text-text-main hover:text-brand-primary transition font-medium">預算分析</a>
+                    <a href="#ai-guide" class="text-brand-accent hover:text-orange-700 transition font-bold">✨ 智慧嚮導</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-4 text-center border-b border-gray-200">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-brand-primary mb-4">從花蓮出發：蘭嶼四日深度體驗</h1>
+            <p class="text-lg text-text-light mb-8">專為東部大學生量身打造的高CP值行程。本指南結合數據視覺化與 ✨ Gemini AI 助理，協助您輕鬆掌握交通、預算與達悟族文化，打造無可取代的青春回憶。</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-brand-surface p-4 rounded-xl shadow-sm">
+                    <div class="text-3xl mb-2">⏱️</div>
+                    <div class="font-bold text-brand-primary">4天3夜</div>
+                </div>
+                <div class="bg-brand-surface p-4 rounded-xl shadow-sm">
+                    <div class="text-3xl mb-2">💰</div>
+                    <div class="font-bold text-brand-primary">NT$ 9,500</div>
+                </div>
+                <div class="bg-brand-surface p-4 rounded-xl shadow-sm">
+                    <div class="text-3xl mb-2">🛵</div>
+                    <div class="font-bold text-brand-primary">機車環島</div>
+                </div>
+                <div class="bg-brand-surface p-4 rounded-xl shadow-sm">
+                    <div class="text-3xl mb-2">🤿</div>
+                    <div class="font-bold text-brand-primary">潛水與文化</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-16 space-y-24">
+
+        <section id="transport" class="scroll-mt-24">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-primary border-l-4 border-brand-accent pl-4">交通路線解構</h2>
+                <p class="mt-4 text-text-light">此區塊將複雜的跨縣市與跨海交通簡化為清晰的步驟。對於從花蓮出發的學生，轉乘的順暢度決定了第一天的旅遊品質。請參考下方流程圖規劃您的接駁時間。</p>
+            </div>
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex-1 text-center w-full bg-brand-surface md:bg-transparent p-6 md:p-0 rounded-2xl">
+                        <div class="w-20 h-20 bg-brand-secondary text-brand-primary text-4xl rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">🚆</div>
+                        <h3 class="font-bold text-xl mb-2">1. 鐵路南下</h3>
+                        <p class="text-brand-primary font-medium mb-1">花蓮車站 ➔ 台東車站</p>
+                        <p class="text-sm text-text-light">普悠瑪/自強號 (約1.5-2小時)<br>學生優惠與早鳥票需提早搶購</p>
+                    </div>
+                    <div class="text-3xl text-gray-300 transform rotate-90 md:rotate-0">➔</div>
+                    <div class="flex-1 text-center w-full bg-brand-surface md:bg-transparent p-6 md:p-0 rounded-2xl">
+                        <div class="w-20 h-20 bg-brand-secondary text-brand-primary text-4xl rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">🚕</div>
+                        <h3 class="font-bold text-xl mb-2">2. 陸路接駁</h3>
+                        <p class="text-brand-primary font-medium mb-1">台東車站 ➔ 富岡漁港</p>
+                        <p class="text-sm text-text-light">計程車共乘 (約15分鐘)<br>推薦與同車旅客拼車分攤車資</p>
+                    </div>
+                    <div class="text-3xl text-gray-300 transform rotate-90 md:rotate-0">➔</div>
+                    <div class="flex-1 text-center w-full bg-brand-surface md:bg-transparent p-6 md:p-0 rounded-2xl">
+                        <div class="w-20 h-20 bg-brand-primary text-white text-4xl rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">⛴️</div>
+                        <h3 class="font-bold text-xl mb-2">3. 跨海渡輪</h3>
+                        <p class="text-brand-primary font-medium mb-1">富岡漁港 ➔ 蘭嶼開元港</p>
+                        <p class="text-sm text-text-light">客輪 (約2-2.5小時)<br>強烈建議出發前30分鐘服用暈船藥</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="itinerary" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl font-bold text-brand-primary border-l-4 border-brand-accent pl-4">互動式行程規劃</h2>
+                    <p class="mt-4 text-text-light">利用分頁設計，讓您專注於每日的核心活動，避免資訊過載。此外，您可以點擊右側的 AI 按鈕，根據大學生的喜好獲取專屬的行程優化建議。</p>
+                </div>
+                <button onclick="fetchItineraryAdvice()" class="bg-brand-secondary text-brand-primary px-5 py-3 rounded-full font-bold shadow-sm hover:bg-brand-primary hover:text-white transition flex items-center gap-2">
+                    <span>✨</span> AI 優化建議
+                </button>
+            </div>
+
+            <div id="itinerary-ai-box" class="hidden mb-6 bg-orange-50 border border-orange-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-3 mb-2">
+                    <div id="itinerary-loader" class="loader hidden"></div>
+                    <h4 class="font-bold text-brand-accent">✨ 智慧助理建議：</h4>
+                </div>
+                <p id="itinerary-ai-text" class="text-text-main text-sm leading-relaxed"></p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6">
+                <div class="lg:w-1/4 flex lg:flex-col overflow-x-auto lg:overflow-visible gap-3 no-scrollbar pb-2">
+                    <button class="itinerary-tab w-full text-left px-6 py-4 rounded-xl font-bold bg-brand-primary text-white shadow-md transition" data-day="1" onclick="selectTab(1)">
+                        Day 1: 初見與落日
+                    </button>
+                    <button class="itinerary-tab w-full text-left px-6 py-4 rounded-xl font-bold bg-white text-text-light border border-gray-200 hover:bg-brand-surface transition" data-day="2" onclick="selectTab(2)">
+                        Day 2: 湛藍與地底
+                    </button>
+                    <button class="itinerary-tab w-full text-left px-6 py-4 rounded-xl font-bold bg-white text-text-light border border-gray-200 hover:bg-brand-surface transition" data-day="3" onclick="selectTab(3)">
+                        Day 3: 秘境與燒烤
+                    </button>
+                    <button class="itinerary-tab w-full text-left px-6 py-4 rounded-xl font-bold bg-white text-text-light border border-gray-200 hover:bg-brand-surface transition" data-day="4" onclick="selectTab(4)">
+                        Day 4: 滿載與歸途
+                    </button>
+                </div>
+
+                <div class="lg:w-3/4 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 min-h-[400px]">
+                    <div id="day-1" class="day-content block">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="text-4xl">🌅</span>
+                            <div>
+                                <h3 class="text-2xl font-bold text-brand-primary">抵達、機車環島與青青草原</h3>
+                                <p class="text-sm text-text-light">適應島上節奏的輕鬆開局</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-6 relative border-l-2 border-brand-surface ml-4">
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">中午：開元港取車與補給</h4>
+                                <p class="text-text-light mt-1 text-sm">與民宿接洽領取機車。建議於港口附近的超市（島上少數有冷氣的商店）購買足夠的飲用水。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-primary rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">下午：北部奇岩巡禮</h4>
+                                <p class="text-text-light mt-1 text-sm">騎乘機車適應路況，沿途停靠鱷魚岩、坦克岩拍照，注意路上隨時出現的羊群。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">傍晚：青青草原賞落日</h4>
+                                <p class="text-text-light mt-1 text-sm">帶著野餐墊前往青青草原，與同行好友拍下大學時期最具代表性的夕陽剪影照。</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="day-2" class="day-content hidden">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="text-4xl">🤿</span>
+                            <div>
+                                <h3 class="text-2xl font-bold text-brand-primary">東清曙光、潛水與地下屋</h3>
+                                <p class="text-sm text-text-light">耗費體力但最充實的一天</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-6 relative border-l-2 border-brand-surface ml-4">
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">清晨：東清灣迎日出</h4>
+                                <p class="text-text-light mt-1 text-sm">熱血早起，以達悟族拼板舟為前景，拍攝台灣第一道曙光，隨後享用知名的東清早點。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-primary rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">上午：世界級透明度潛水</h4>
+                                <p class="text-text-light mt-1 text-sm">跟隨當地教練進行浮潛或體驗潛水，尋找海龜與小丑魚。請務必使用海洋友善防曬乳或穿著水母衣。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">下午：野銀部落地下屋導覽</h4>
+                                <p class="text-text-light mt-1 text-sm">深入保存最完整的傳統聚落。必須由當地導覽員帶領，親自體驗半穴居的智慧與文化解說。</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="day-3" class="day-content hidden">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="text-4xl">⛰️</span>
+                            <div>
+                                <h3 class="text-2xl font-bold text-brand-primary">氣象站、冷泉與海景BBQ</h3>
+                                <p class="text-sm text-text-light">探索蘭嶼多元的自然地貌</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-6 relative border-l-2 border-brand-surface ml-4">
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">上午：攻頂蘭嶼氣象站</h4>
+                                <p class="text-text-light mt-1 text-sm">全島最佳觀景點。上山路途陡峭，建議將機車停放下方步行而上，享受360度零死角海景。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-primary rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">下午：野銀冷泉秘境</h4>
+                                <p class="text-text-light mt-1 text-sm">淡水與海水交界處的天然泳池。泡在冰涼的泉水中消暑，是極佳的放鬆與拍照地點。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">晚上：露天海景BBQ</h4>
+                                <p class="text-text-light mt-1 text-sm">大學生不可或缺的烤肉行程！伴隨海風與星空，與三五好友盡情暢聊分享旅程點滴。</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="day-4" class="day-content hidden">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="text-4xl">🚢</span>
+                            <div>
+                                <h3 class="text-2xl font-bold text-brand-primary">伴手禮與告別湛藍</h3>
+                                <p class="text-sm text-text-light">收心與返程的緩衝時間</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-6 relative border-l-2 border-brand-surface ml-4">
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">上午：明信片與紀念品</h4>
+                                <p class="text-text-light mt-1 text-sm">尋找特色小店購買飛魚乾或手工藝品，寫張明信片寄給未來的自己或家人。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-primary rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">近中午：還車與候船</h4>
+                                <p class="text-text-light mt-1 text-sm">確認行李無遺漏，至開元港歸還機車。提早排隊等候渡輪，再次服用暈船藥。</p>
+                            </li>
+                            <li class="pl-6 relative">
+                                <div class="absolute w-4 h-4 bg-brand-accent rounded-full -left-[9px] top-1 border-4 border-white"></div>
+                                <h4 class="font-bold text-lg">下午：循原路返回花蓮</h4>
+                                <p class="text-text-light mt-1 text-sm">抵達台東後轉乘火車，帶著滿滿的湛藍回憶與曬黑的皮膚，平安回到花蓮。</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="budget" class="scroll-mt-24">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-primary border-l-4 border-brand-accent pl-4">經費結構與 AI 預算分析</h2>
+                <p class="mt-4 text-text-light">以圖表呈現 NT$ 10,000 的預設花費比例，讓學生清楚資金流向。您也可以在右側輸入您的實際預算，讓 AI 幫您評估可行性並提供客製化的省錢策略。</p>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col md:flex-row gap-10 items-center">
+                <div class="w-full md:w-1/2">
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2 flex flex-col justify-center">
+                    <div class="bg-brand-surface p-6 rounded-2xl mb-6">
+                        <h3 class="font-bold text-xl mb-4 text-brand-primary">標準項目預估 (NT$)</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between border-b border-gray-300 pb-2"><span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#0f766e]"></div>交通</span><span class="font-bold">3,800</span></div>
+                            <div class="flex justify-between border-b border-gray-300 pb-2"><span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#0ea5e9]"></div>住宿</span><span class="font-bold">2,700</span></div>
+                            <div class="flex justify-between border-b border-gray-300 pb-2"><span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#f59e0b]"></div>飲食</span><span class="font-bold">2,000</span></div>
+                            <div class="flex justify-between border-b border-gray-300 pb-2"><span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#ea580c]"></div>體驗</span><span class="font-bold">1,500</span></div>
+                        </div>
+                    </div>
+
+                    <h3 class="font-bold text-lg mb-2">💰 自訂預算諮詢</h3>
+                    <div class="flex gap-2 mb-4">
+                        <input type="number" id="budget-input" placeholder="輸入總預算 (例: 8500)" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <button onclick="fetchBudgetAdvice()" class="bg-brand-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-teal-800 transition">分析</button>
+                    </div>
+                    <div id="budget-ai-box" class="hidden bg-brand-secondary p-4 rounded-xl">
+                        <div id="budget-loader" class="loader hidden"></div>
+                        <p id="budget-ai-text" class="text-sm text-brand-primary font-medium"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-guide" class="scroll-mt-24">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-primary border-l-4 border-brand-accent pl-4">文化須知與智慧嚮導</h2>
+                <p class="mt-4 text-text-light">蘭嶼不僅是風景區，更是達悟族人的家園。除了遵守基本的文化禁忌外，您可以使用下方的 AI 導覽員，即時查詢達悟語或詢問任何關於當地風俗的疑問。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="text-4xl mb-3">📸</div>
+                    <h3 class="font-bold text-lg mb-2 text-brand-primary">攝影先徵求同意</h3>
+                    <p class="text-sm text-text-light">拍攝當地居民、地下屋或拼板舟前，務必禮貌詢問，尊重當地隱私。</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="text-4xl mb-3">🐟</div>
+                    <h3 class="font-bold text-lg mb-2 text-brand-primary">尊重飛魚季規範</h3>
+                    <p class="text-sm text-text-light">每年春夏季期間，嚴禁隨意觸摸拼板舟，並需遵守各部落的海域活動限制。</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="text-4xl mb-3">🐢</div>
+                    <h3 class="font-bold text-lg mb-2 text-brand-primary">海洋生態友善</h3>
+                    <p class="text-sm text-text-light">垃圾自行帶回本島。下海不塗抹化學防曬，絕不觸摸或追逐任何海洋生物。</p>
+                </div>
+            </div>
+
+            <div class="bg-brand-primary rounded-3xl p-8 md:p-10 text-white shadow-xl">
+                <h3 class="text-2xl font-bold mb-2">✨ 詢問 AI 達悟嚮導</h3>
+                <p class="mb-6 text-brand-secondary text-sm md:text-base">想知道「謝謝」的達悟語怎麼說？或是想了解當地傳統美食？輸入您的問題，AI 將為您解答。</p>
+                <div class="flex flex-col md:flex-row gap-3">
+                    <input type="text" id="guide-input" placeholder="例如：飛魚季是什麼時候？有哪些禁忌？" class="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 rounded-xl px-5 py-4 focus:outline-none focus:bg-white/20 transition">
+                    <button onclick="fetchGuideAnswer()" class="bg-brand-accent text-white font-bold rounded-xl px-8 py-4 hover:bg-orange-500 transition shadow-md">送出問題</button>
+                </div>
+                <div id="guide-response-box" class="hidden mt-6 bg-white/5 p-6 rounded-2xl border border-white/10">
+                    <div id="guide-loader" class="loader hidden border-white/30 border-top-white mb-2"></div>
+                    <p id="guide-text" class="text-sm md:text-base leading-relaxed"></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-10 mt-16 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="text-text-main font-bold text-lg mb-2">願您的青春在人之島留下最美的湛藍回憶</p>
+            <p class="text-text-light text-sm">© 2026 蘭嶼熱血探索計畫 | 結合 Gemini AI 智慧分析</p>
+        </div>
+    </footer>
+
+    <script>
+        const apiKey = "";
+        
+        async function fetchGemini(prompt, systemInstruction = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            if (systemInstruction) {
+                payload.systemInstruction = { parts: [{ text: systemInstruction }] };
+            }
+            
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) return await response.json();
+                } catch (e) {}
+                await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+            }
+            throw new Error('API Request Failed');
+        }
+
+        function selectTab(day) {
+            document.querySelectorAll('.day-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            document.querySelectorAll('.itinerary-tab').forEach(btn => {
+                btn.classList.remove('bg-brand-primary', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'text-text-light');
+            });
+            
+            document.getElementById(`day-${day}`).classList.remove('hidden');
+            document.getElementById(`day-${day}`).classList.add('block');
+            
+            const activeBtn = document.querySelector(`.itinerary-tab[data-day="${day}"]`);
+            activeBtn.classList.remove('bg-white', 'text-text-light');
+            activeBtn.classList.add('bg-brand-primary', 'text-white', 'shadow-md');
+        }
+
+        async function fetchItineraryAdvice() {
+            const box = document.getElementById('itinerary-ai-box');
+            const textEl = document.getElementById('itinerary-ai-text');
+            const loader = document.getElementById('itinerary-loader');
+            
+            box.classList.remove('hidden');
+            textEl.innerText = "正在為您分析並產生行程優化建議...";
+            loader.classList.remove('hidden');
+
+            try {
+                const prompt = "我是一個從花蓮出發的大學生，規劃去蘭嶼四天三夜。目前的基礎行程是環島、潛水、地下屋。請以繁體中文給出 2 條具體的「在地深度體驗或秘境」優化建議，幫助我的行程更熱血。字數控制在80字以內。";
+                const result = await fetchGemini(prompt);
+                textEl.innerText = result.candidates[0].content.parts[0].text;
+            } catch (error) {
+                textEl.innerText = "目前無法連接至 AI 助理，請稍後再試。";
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        async function fetchBudgetAdvice() {
+            const inputVal = document.getElementById('budget-input').value;
+            if (!inputVal) return;
+
+            const box = document.getElementById('budget-ai-box');
+            const textEl = document.getElementById('budget-ai-text');
+            const loader = document.getElementById('budget-loader');
+
+            box.classList.remove('hidden');
+            textEl.innerText = "計算與分析中...";
+            loader.classList.remove('hidden');
+
+            try {
+                const prompt = `我是一名大學生，從花蓮去蘭嶼四天三夜，總預算為新台幣 ${inputVal} 元。標準花費大約是 9500元。請以繁體中文分析我的預算是否足夠，並給出1個具體的資金分配或省錢建議。字數控制在60字以內。`;
+                const result = await fetchGemini(prompt);
+                textEl.innerText = result.candidates[0].content.parts[0].text;
+            } catch (error) {
+                textEl.innerText = "預算分析服務暫時無法使用。";
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        async function fetchGuideAnswer() {
+            const inputVal = document.getElementById('guide-input').value;
+            if (!inputVal) return;
+
+            const box = document.getElementById('guide-response-box');
+            const textEl = document.getElementById('guide-text');
+            const loader = document.getElementById('guide-loader');
+
+            box.classList.remove('hidden');
+            textEl.innerText = "嚮導正在思考中...";
+            loader.classList.remove('hidden');
+
+            try {
+                const systemMsg = "你是一位親切的蘭嶼在地文化嚮導。請以繁體中文簡潔地回答使用者關於蘭嶼旅遊、達悟族文化、禁忌或語言的問題。如果是達悟語教學，請附上簡易發音參考。字數控制在100字內。";
+                const result = await fetchGemini(inputVal, systemMsg);
+                textEl.innerText = result.candidates[0].content.parts[0].text;
+            } catch (error) {
+                textEl.innerText = "嚮導目前不在線上，請稍後再嘗試詢問。";
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['交通接駁', '住宿費用', '三餐飲食', '水下/文化體驗'],
+                    datasets: [{
+                        data: [3800, 2700, 2000, 1500],
+                        backgroundColor: ['#0f766e', '#0ea5e9', '#f59e0b', '#ea580c'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20, font: { family: 'sans-serif' } } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
